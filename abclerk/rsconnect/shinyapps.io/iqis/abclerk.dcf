@@ -1,0 +1,12 @@
+name: abclerk
+title: abclerk
+username:
+account: iqis
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 859510
+bundleId: 2005053
+url: https://iqis.shinyapps.io/abclerk/
+when: 1555043083.43772
+asMultiple: FALSE
+asStatic: FALSE

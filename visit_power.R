@@ -1,10 +1,12 @@
 require(pwr)
 require(ggplot2)
+# require(plotly)
 require(scales)
+
 
 n <- seq(250, 100000, by = 250)
 p1 <- 0.2
-uplift <- 0.06
+uplift <- 0.1
 p2 <- p1*(1 + uplift)
 
 desired_power <- 0.8
@@ -41,7 +43,13 @@ plot_01 <- ggplot(d, aes(x = n, y = power)) +
                    position = position_nudge(x = 0.15 * max(n),
                                              y = -0.07 * max(power)
                    ))
-
+#
+# plot_02 <- plot_ly(x = n,
+#                    y = power,
+#                    type = "scatter",
+#                    mode = "lines")
+#
+# plot_02
 
 conclusion <- paste("You need", necessary_n, "visitors to make sure that your A/B test has a", percent(desired_power), "probability to confirm if Plan B will produce a", percent(uplift), "uplift from Plan A's", percent(p1), "conversion rate to", percent(p2), ", due to less than", percent(sig), "random chance.")
 
