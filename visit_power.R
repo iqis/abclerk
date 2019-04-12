@@ -43,15 +43,9 @@ plot_01 <- ggplot(d, aes(x = n, y = power)) +
                    ))
 
 
-plot_01
-
-conclusion <- paste("To test", percent(uplift),  "uplift from", percent(p1), "convertion rate you need at least", necessary_n, "visits to achieve power of", desired_power, "at", sig, "significance level.")
-
-conclusion <- paste("To test", percent(uplift),  "uplift from", percent(p1), "convertion rate you need at least", necessary_n, "visits to be confident that there is an", percent(desired_power), "of chance  even with less than", percent(sig), "random chance.")
-
 conclusion <- paste("You need", necessary_n, "visitors to make sure that your A/B test has a", percent(desired_power), "probability to confirm if Plan B will produce a", percent(uplift), "uplift from Plan A's", percent(p1), "conversion rate to", percent(p2), ", due to less than", percent(sig), "random chance.")
 
 
 # Echo
-plot_01
+print(plot_01)
 cat(conclusion)
