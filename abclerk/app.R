@@ -6,9 +6,12 @@ require(scales)
 
 
 #### UI ####
-ui <- fluidPage(theme = shinytheme("yeti"),
-        titlePanel("A/B Clerk: A/B Test Power Calculator"), sidebarLayout(
+ui <- navbarPage("A/B Clerk: A/B Power Calculator", theme = shinytheme("yeti"),
+        tabPanel("Visitor vs Power",
+        sidebarLayout(
         sidebarPanel(
+                h4("Test Configuration"),
+                hr(),
                 numericInput("p1",
                              "Plan A Conversion Rate %",
                              value = 5,
@@ -20,6 +23,9 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                              value = 10,
                              min = 0
                 ),
+                br(),
+                h4("Desired Statistics"),
+                hr(),
                 selectInput("confidence",
                              "Confidence %",
                             choices = c(90, 95, 99, 99.9),
@@ -27,7 +33,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                             selectize = FALSE
                 ),
                 sliderInput("desired_power",
-                             "Desired Power",
+                             "Power",
                              value = 0.8,
                              min = 0.5,
                              max = 1,
@@ -35,11 +41,12 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                 )
         ),
         mainPanel(
+                h2("How many visits do I need?"),
                 plotOutput("plot_01",
                            click = clickOpts("plot_01_click")),
                 textOutput("conclusion"),
                 verbatimTextOutput("xxx")
-        )
+        ))
 ))
 
 #### Server ####
@@ -93,7 +100,7 @@ server <- function(input, output) {
 
         output$conclusion <- renderText({
                 req(power)
-                paste("You need", necessary_n(), "visitors to make sure that your A/B test has a", percent(desired_power()), "probability to confirm if Plan B will produce a", percent(uplift()), "uplift from Plan A's", percent(p1()), "conversion rate, owing less than", percent(sig(), accuracy = 0.01), "to random chance.")})
+                paste("You need", necessary_n(), "visits to make sure that your A/B test has a", percent(desired_power()), "probability to confirm whether Plan B will produce a", percent(uplift()), "uplift from Plan A's", percent(p1()), "conversion rate, owing less than", percent(sig(), accuracy = 0.01), "to random chance.")})
         output$xxx <- renderPrint(input$plot_01_click$x)
 }
 
