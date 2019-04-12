@@ -50,10 +50,9 @@ ui <- navbarPage("A/B Clerk v0.0.2: Test Calculator", theme = shinytheme("yeti")
         mainPanel(
                 h2("How many visitors do I need?"),
                 br(),
-                fluidRow(column(2), column(7, htmlOutput("conclusion"))),
+                fluidRow(column(7, offset = 2, htmlOutput("conclusion"))),
                 br(),
-                fluidRow(column(1),
-                         column(10,
+                fluidRow(column(10, offset = 1,
                                 h4("Visitor/Power"),
                                 plotOutput("plot_01",
                                            click = clickOpts("plot_01_click"))
