@@ -6,11 +6,11 @@ require(scales)
 
 
 #### UI ####
-ui <- navbarPage("A/B Clerk v0.0.2: Test Calculator", theme = shinytheme("yeti"),
-        tabPanel("How many visitors?",
+ui <- navbarPage("A/B Clerk v0.0.2: Test Sample Size Calculator", theme = shinytheme("yeti"),
+        tabPanel("New Test",
         sidebarLayout(
         sidebarPanel(width = 3,
-                h4("Test Configuration"),
+                h4("Test Expectations"),
                 hr(),
                 numericInput("p1",
                              "Plan A Conversion Rate %",
@@ -18,19 +18,19 @@ ui <- navbarPage("A/B Clerk v0.0.2: Test Calculator", theme = shinytheme("yeti")
                              min = 0,
                              max = 100
                 ),
-                numericInput("p2",
-                             "Plan B Conversion Rate %",
-                             value = 5,
-                             min = 0,
-                             max = 100
-                ),
                 numericInput("uplift",
-                             "Expected Uplift % from Plan B",
+                             "Plan B Uplift (MDE) from Plan A %",
                              value = 10,
                              min = 0
                 ),
+                numericInput("weekly_n",
+                             "Weekly Visitors",
+                             value = 5000,
+                             min = 0,
+                             step = 100
+                ),
                 br(),
-                h4("Desired Statistic Levels"),
+                h4("Statistic Levels"),
                 hr(),
                 sliderInput("desired_power",
                              "Power",
@@ -48,7 +48,7 @@ ui <- navbarPage("A/B Clerk v0.0.2: Test Calculator", theme = shinytheme("yeti")
                 )
         ),
         mainPanel(
-                h2("How many visitors do I need?"),
+                h2("How many visitors do I need for a new test?"),
                 br(),
                 fluidRow(column(7, offset = 2, htmlOutput("conclusion"))),
                 br(),
@@ -59,11 +59,12 @@ ui <- navbarPage("A/B Clerk v0.0.2: Test Calculator", theme = shinytheme("yeti")
                 )),
                 br()
         ))),
-        tabPanel("Test result significant?",
+        tabPanel("Ongoing Test",
         sidebarLayout(
         sidebarPanel(
                 ),
         mainPanel(
+                h2("Do I need more visitors for an ongoing test?")
 
         )))
 )
@@ -74,13 +75,15 @@ server <- function(input, output) {
         p1 <- reactive(input$p1 / 100)
         uplift <- reactive(input$uplift / 100)
         p2 <- reactive(p1()*(1 + uplift()))
-        sig <- reactive(1 - as.numeric(input$confidence) / 100)
+        weekly_n <- reactive(input$weekly_n)
 
+        sig <- reactive(1 - as.numeric(input$confidence) / 100)
         power <- reactive({sapply(
                         n,
                         function(.) pwr.2p.test(h = ES.h(p1 = p2(), p2 = p1()),
                                                 n = .,
-                                                sig.level = sig())$power
+                                                sig.level = sig(),
+                                                alternative = "greater")$power
         )})
 
         d <- reactive(data.frame(n = n, power = power()))
@@ -120,9 +123,17 @@ server <- function(input, output) {
         output$conclusion <- renderText({
                 req(power)
                 with(tags,
-                paste("... you need at least", b(necessary_n()), "visitors for each plan to make sure that your A/B test has a", percent(desired_power()), "probability to confirm whether Plan B will produce a", percent(uplift()), "uplift from Plan A's", percent(p1()), "conversion rate, owing less than", percent(sig(), accuracy = 0.1), "to random chance."))
+                paste("... you need at least", b(necessary_n()), "visitors and", round(necessary_n()/weekly_n(), 1), "weeks for each plan to make sure that your A/B test has a", percent(desired_power()), "probability (power) to confirm whether Plan B achieves at least", percent(p2()), "conversion rate,", percent(uplift()), "improvement from Plan A's", percent(p1()), ", owing less than", percent(sig(), accuracy = 0.1), "to random chance."))
         })
-        output$xxx <- renderText(input$plot_01_click$x)
+
+        output$p2.ui <- renderUI({
+                numericInput("p2",
+                             "Plan B Conversion Rate %",
+                             value = p2() * 100,
+                             min = 0,
+                             max = 100
+                )
+        })
 }
 
 # Run the application
