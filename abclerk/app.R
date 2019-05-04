@@ -64,7 +64,8 @@ ui <- navbarPage("A/B Clerk v0.0.2: Test Sample Size Calculator", theme = shinyt
         sidebarPanel(
                 ),
         mainPanel(
-                h2("Do I need more visitors for an ongoing test?")
+                h2("Do I need more visitors for an ongoing test?"),
+                p("Under Construction...")
 
         )))
 )
@@ -138,4 +139,3 @@ server <- function(input, output) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
-# ######
