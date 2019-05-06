@@ -5,8 +5,8 @@ account: iqis
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 859510
-bundleId: 2005313
+bundleId: 2059316
 url: https://iqis.shinyapps.io/abclerk/
-when: 1555053746.61514
+when: 1556943874.77832
 asMultiple: FALSE
 asStatic: FALSE
